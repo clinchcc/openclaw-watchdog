@@ -6,6 +6,12 @@ export async function runInit() {
   const answers = await inquirer.prompt([
     {
       type: 'input',
+      name: 'OPENCLAW_CONFIG_PATH',
+      message: 'OpenClaw config path (optional, leave blank for auto):',
+      default: ''
+    },
+    {
+      type: 'input',
       name: 'HEALTH_URL',
       message: 'OpenClaw health URL:',
       default: 'http://localhost:18789/health'
@@ -49,8 +55,8 @@ export async function runInit() {
     {
       type: 'input',
       name: 'ROLLBACK_COMMAND',
-      message: 'Rollback command:',
-      default: 'node src/cli/index.js rollback --auto'
+      message: 'Rollback command (`internal` recommended):',
+      default: 'internal'
     },
     {
       type: 'list',

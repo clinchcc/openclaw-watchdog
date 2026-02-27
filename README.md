@@ -29,6 +29,7 @@ npm start
 
 Generated `.env` fields:
 
+- `OPENCLAW_CONFIG_PATH` (optional explicit path to `openclaw.json`)
 - `HEALTH_URL`
 - `CHECK_INTERVAL_MS`
 - `FAIL_THRESHOLD`
@@ -36,7 +37,7 @@ Generated `.env` fields:
 - `AUTO_RESTART`
 - `RESTART_COMMAND`
 - `AUTO_ROLLBACK`
-- `ROLLBACK_COMMAND` (default uses built-in Node.js rollback flow)
+- `ROLLBACK_COMMAND` (`internal` by default; recommended for service mode)
 - `NOTIFIER` = `telegram|discord|whatsapp|none`
 
 Notifier-specific fields:

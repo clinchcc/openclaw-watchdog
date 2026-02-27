@@ -2,6 +2,7 @@ import axios from 'axios';
 import { execaCommand } from 'execa';
 import { notify } from '../notifiers/index.js';
 import { logger } from '../utils/logger.js';
+import { runRollback } from './rollback.js';
 
 async function runCommand(cmd) {
   const { stdout, stderr } = await execaCommand(cmd, { shell: true });
@@ -36,7 +37,24 @@ export async function recover(config, failCount) {
       'attempting rollback'
     );
     try {
-      await runCommand(config.ROLLBACK_COMMAND);
+      if (config.ROLLBACK_COMMAND === 'internal') {
+        const r = await runRollback({
+          auto: true,
+          configPath: config.OPENCLAW_CONFIG_PATH || '',
+          healthUrl: config.HEALTH_URL,
+          restartCommand: config.RESTART_COMMAND
+        });
+        if (r.ok) return { recovered: true, step: 'rollback' };
+      } else {
+        const hasConfigPathArg = /(^|\s)--config-path(\s|=)/.test(config.ROLLBACK_COMMAND);
+        const rollbackCmd = `${config.ROLLBACK_COMMAND} ${
+          config.OPENCLAW_CONFIG_PATH && !hasConfigPathArg
+            ? `--config-path "${config.OPENCLAW_CONFIG_PATH}"`
+            : ''
+        }`.trim();
+        await runCommand(rollbackCmd);
+      }
+
       const afterRollback = await checkHealth(config);
       if (afterRollback.ok) return { recovered: true, step: 'rollback' };
     } catch (e) {
@@ -81,13 +99,32 @@ export async function runOnce(config, state) {
 
 export async function runLoop(config) {
   const state = { failCount: 0 };
+  let inFlight = false;
+
   logger.info(
-    { intervalMs: config.CHECK_INTERVAL_MS, threshold: config.FAIL_THRESHOLD },
+    {
+      intervalMs: config.CHECK_INTERVAL_MS,
+      threshold: config.FAIL_THRESHOLD,
+      rollbackThreshold: config.ROLLBACK_THRESHOLD
+    },
     'watchdog started'
   );
 
-  await runOnce(config, state);
-  setInterval(() => {
-    runOnce(config, state).catch((e) => logger.error({ err: e.message }, 'runOnce failed'));
-  }, config.CHECK_INTERVAL_MS);
+  const tick = async () => {
+    if (inFlight) {
+      logger.warn('skip tick: previous run still in progress');
+      return;
+    }
+    inFlight = true;
+    try {
+      await runOnce(config, state);
+    } catch (e) {
+      logger.error({ err: e.message }, 'runOnce failed');
+    } finally {
+      inFlight = false;
+    }
+  };
+
+  await tick();
+  setInterval(tick, config.CHECK_INTERVAL_MS);
 }

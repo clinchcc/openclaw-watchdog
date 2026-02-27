@@ -2,6 +2,7 @@ import 'dotenv/config';
 import { z } from 'zod';
 
 const schema = z.object({
+  OPENCLAW_CONFIG_PATH: z.string().optional(),
   HEALTH_URL: z.string().url().default('http://localhost:18789/health'),
   CHECK_INTERVAL_MS: z.coerce.number().int().positive().default(600000),
   FAIL_THRESHOLD: z.coerce.number().int().positive().default(1),
@@ -11,7 +12,7 @@ const schema = z.object({
   RESTART_COMMAND: z.string().default('openclaw gateway restart'),
 
   AUTO_ROLLBACK: z.string().default('true'),
-  ROLLBACK_COMMAND: z.string().default('node src/cli/index.js rollback --auto'),
+  ROLLBACK_COMMAND: z.string().default('internal'),
 
   NOTIFIER: z.enum(['telegram', 'discord', 'whatsapp', 'none']).default('none'),
 
