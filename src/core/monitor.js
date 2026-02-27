@@ -94,14 +94,23 @@ export async function runOnce(config, state) {
 
   if (state.failCount < config.FAIL_THRESHOLD) return;
 
+  // Track restart attempts (separate from failCount)
+  if (!state.restartAttempts) state.restartAttempts = 0;
+  const shouldRollback = state.restartAttempts >= config.ROLLBACK_THRESHOLD;
+
   await notify(
     config,
     `[${config.CLAW_NAME}] 🔴 unhealthy (HTTP ${h.code || 'N/A'}). Trying recovery: restart first${
-      state.failCount >= config.ROLLBACK_THRESHOLD ? ' -> rollback' : ''
+      shouldRollback ? ' -> rollback' : ''
     }.`
   );
 
-  const result = await recover(config, state.failCount);
+  const result = await recover(config, state.restartAttempts);
+
+  // Increment restart attempts if restart was attempted
+  if (result.step?.includes('restart')) {
+    state.restartAttempts += 1;
+  }
   if (result.recovered) {
     state.failCount = 0;
     let msg = `[${config.CLAW_NAME}] 🛠 recovery succeeded via ${result.step}.`;
