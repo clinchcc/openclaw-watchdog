@@ -50,9 +50,19 @@ Notifier-specific fields:
 - Discord: `DISCORD_WEBHOOK_URL`
 - WhatsApp webhook: `WHATSAPP_WEBHOOK_URL`, `WHATSAPP_WEBHOOK_TOKEN` (optional)
 
-## Example service mode
+## Cross-platform service setup
 
-Use your OS service manager to keep it running (`systemd`, `launchd`, Docker, PM2).
+Run:
+
+```bash
+npm run doctor
+```
+
+Then use templates:
+
+- macOS (launchd): `deploy/macos/com.openclaw.watchdog.plist.example`
+- Linux (systemd): `deploy/linux/openclaw-watchdog.service.example`
+- Windows (Task Scheduler): `deploy/windows/install-task.ps1`
 
 ## License
 

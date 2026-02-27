@@ -10,6 +10,7 @@
     "start": "node src/cli/index.js run",
     "init": "node src/cli/index.js init",
     "check": "node src/cli/index.js check",
+    "doctor": "node src/cli/index.js doctor",
     "lint": "echo 'add your linter here'",
     "test": "echo 'add tests here'"
   },

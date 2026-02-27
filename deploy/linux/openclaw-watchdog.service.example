@@ -1,0 +1,14 @@
+[Unit]
+Description=OpenClaw Watchdog
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/openclaw-watchdog
+ExecStart=/usr/bin/env npm start
+Restart=always
+RestartSec=5
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target

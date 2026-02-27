@@ -4,6 +4,7 @@ import { loadConfig } from '../core/config.js';
 import { runLoop, runOnce } from '../core/monitor.js';
 import { runInit } from './init.js';
 import { logger } from '../utils/logger.js';
+import { runDoctor } from '../doctor/index.js';
 
 const program = new Command();
 program.name('oc-watchdog').description('OpenClaw watchdog').version('0.1.0');
@@ -29,6 +30,13 @@ program
   .action(async () => {
     const config = loadConfig();
     await runLoop(config);
+  });
+
+program
+  .command('doctor')
+  .description('Show OS-specific deployment guidance')
+  .action(() => {
+    runDoctor();
   });
 
 program.parseAsync(process.argv).catch((e) => {
