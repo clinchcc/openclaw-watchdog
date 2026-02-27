@@ -31,7 +31,7 @@ export async function runInit() {
       type: 'input',
       name: 'FAIL_THRESHOLD',
       message: 'Consecutive failures before recovery attempt:',
-      default: '1'
+      default: '2'
     },
     {
       type: 'input',

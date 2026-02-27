@@ -10,7 +10,7 @@ const schema = z.object({
   OPENCLAW_CONFIG_PATH: z.string().optional(),
   HEALTH_URL: z.string().url().default('http://localhost:18789/health'),
   CHECK_INTERVAL_MS: z.coerce.number().int().positive().default(300000),
-  FAIL_THRESHOLD: z.coerce.number().int().positive().default(1),
+  FAIL_THRESHOLD: z.coerce.number().int().positive().default(2),
   ROLLBACK_THRESHOLD: z.coerce.number().int().positive().default(5),
 
   AUTO_RESTART: z.string().default('true'),
