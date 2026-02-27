@@ -5,6 +5,7 @@ import { runLoop, runOnce } from '../core/monitor.js';
 import { runInit } from './init.js';
 import { logger } from '../utils/logger.js';
 import { runDoctor } from '../doctor/index.js';
+import { runRollback } from '../core/rollback.js';
 
 const program = new Command();
 program.name('oc-watchdog').description('OpenClaw watchdog').version('0.1.0');
@@ -37,6 +38,26 @@ program
   .description('Show OS-specific deployment guidance')
   .action(() => {
     runDoctor();
+  });
+
+program
+  .command('rollback')
+  .description('Run built-in cross-platform rollback flow')
+  .option('--auto', 'auto mode, no prompt', false)
+  .option('--backup <path>', 'specific backup file path')
+  .option('--config-path <path>', 'openclaw.json path override')
+  .option('--health-url <url>', 'health URL override', 'http://localhost:18789/health')
+  .option('--restart-command <cmd>', 'restart command override', 'openclaw gateway restart')
+  .action(async (opts) => {
+    const result = await runRollback({
+      auto: Boolean(opts.auto),
+      backup: opts.backup || '',
+      configPath: opts.configPath || '',
+      healthUrl: opts.healthUrl,
+      restartCommand: opts.restartCommand
+    });
+    console.log(JSON.stringify(result, null, 2));
+    if (!result.ok) process.exit(2);
   });
 
 program.parseAsync(process.argv).catch((e) => {

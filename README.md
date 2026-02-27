@@ -8,7 +8,8 @@ It checks gateway health on an interval, attempts recovery (`restart -> rollback
 
 - Health check (`/health` endpoint)
 - Auto-restart command
-- Optional auto-rollback command
+- Built-in cross-platform rollback command (`node src/cli/index.js rollback --auto`)
+- Optional custom rollback command override
 - Notification providers:
   - Telegram Bot API
   - Discord Webhook
@@ -35,7 +36,7 @@ Generated `.env` fields:
 - `AUTO_RESTART`
 - `RESTART_COMMAND`
 - `AUTO_ROLLBACK`
-- `ROLLBACK_COMMAND`
+- `ROLLBACK_COMMAND` (default uses built-in Node.js rollback flow)
 - `NOTIFIER` = `telegram|discord|whatsapp|none`
 
 Notifier-specific fields:

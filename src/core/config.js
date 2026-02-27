@@ -11,7 +11,7 @@ const schema = z.object({
   RESTART_COMMAND: z.string().default('openclaw gateway restart'),
 
   AUTO_ROLLBACK: z.string().default('true'),
-  ROLLBACK_COMMAND: z.string().default('~/.openclaw/workspace/scripts/rollback.sh --auto'),
+  ROLLBACK_COMMAND: z.string().default('node src/cli/index.js rollback --auto'),
 
   NOTIFIER: z.enum(['telegram', 'discord', 'whatsapp', 'none']).default('none'),
 

@@ -50,7 +50,7 @@ export async function runInit() {
       type: 'input',
       name: 'ROLLBACK_COMMAND',
       message: 'Rollback command:',
-      default: '~/.openclaw/workspace/scripts/rollback.sh --auto'
+      default: 'node src/cli/index.js rollback --auto'
     },
     {
       type: 'list',
