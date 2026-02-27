@@ -25,4 +25,7 @@ $trigger = New-ScheduledTaskTrigger -AtLogOn
 $settings = New-ScheduledTaskSettingsSet -RestartCount 999 -RestartInterval (New-TimeSpan -Minutes 1)
 
 Register-ScheduledTask -TaskName $taskName -Action $action -Trigger $trigger -Settings $settings -Description "OpenClaw watchdog runner" -Force
-Write-Host "Scheduled Task created: $taskName"
+
+# Start once immediately so users can verify notifications without re-login
+Start-ScheduledTask -TaskName $taskName
+Write-Host "Scheduled Task created and started: $taskName"

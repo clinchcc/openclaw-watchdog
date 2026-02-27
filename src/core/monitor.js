@@ -70,6 +70,8 @@ export async function runOnce(config, state) {
   if (h.ok) {
     if (state.failCount > 0) {
       await notify(config, `[${config.CLAW_NAME}] 🟢 recovered (HTTP ${h.code})`);
+    } else if (config.NOTIFY_ON_HEALTHY) {
+      await notify(config, `[${config.CLAW_NAME}] ✅ healthy (HTTP ${h.code})`).catch(() => {});
     }
     state.failCount = 0;
     logger.info({ code: h.code }, 'healthy');
