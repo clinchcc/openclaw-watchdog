@@ -100,6 +100,75 @@ During `npm run init`, you can choose:
 - Install service
 - Uninstall service
 
+## Service operations reference (install / uninstall / restart)
+
+### macOS (launchd)
+
+Install/load:
+
+```bash
+launchctl load -w ~/Library/LaunchAgents/com.openclaw.watchdog.plist
+launchctl start com.openclaw.watchdog
+```
+
+Restart:
+
+```bash
+launchctl stop com.openclaw.watchdog
+launchctl start com.openclaw.watchdog
+```
+
+Uninstall/unload:
+
+```bash
+launchctl unload ~/Library/LaunchAgents/com.openclaw.watchdog.plist
+rm -f ~/Library/LaunchAgents/com.openclaw.watchdog.plist
+```
+
+### Linux (systemd --user)
+
+Install/enable:
+
+```bash
+systemctl --user daemon-reload
+systemctl --user enable --now openclaw-watchdog
+```
+
+Restart:
+
+```bash
+systemctl --user restart openclaw-watchdog
+```
+
+Uninstall/disable:
+
+```bash
+systemctl --user disable --now openclaw-watchdog
+rm -f ~/.config/systemd/user/openclaw-watchdog.service
+systemctl --user daemon-reload
+```
+
+### Windows (Task Scheduler)
+
+Install:
+
+```powershell
+.\deploy\windows\install-task.ps1 -ProjectDir "C:\path\to\openclaw-watchdog"
+```
+
+Restart:
+
+```powershell
+Stop-ScheduledTask -TaskName "OpenClawWatchdog"
+Start-ScheduledTask -TaskName "OpenClawWatchdog"
+```
+
+Uninstall:
+
+```powershell
+.\deploy\windows\uninstall-task.ps1
+```
+
 ## Cross-platform helper
 
 Run:

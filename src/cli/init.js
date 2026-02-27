@@ -124,5 +124,9 @@ export async function runInit() {
     console.log(`✅ ${msg}`);
   }
 
-  console.log('Next: npm start');
+  console.log('\n🎉 Setup completed successfully.');
+  console.log('Manual run (foreground): npm start');
+  console.log('Service mode commands:');
+  console.log('  - Install:   npm run service:install');
+  console.log('  - Uninstall: npm run service:uninstall');
 }
