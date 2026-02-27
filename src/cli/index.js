@@ -5,6 +5,7 @@ import { runLoop, runOnce } from '../core/monitor.js';
 import { runInit } from './init.js';
 import { logger } from '../utils/logger.js';
 import { runDoctor } from '../doctor/index.js';
+import { installService, uninstallService } from '../doctor/service.js';
 import { runRollback } from '../core/rollback.js';
 
 const program = new Command();
@@ -38,6 +39,22 @@ program
   .description('Show OS-specific deployment guidance')
   .action(() => {
     runDoctor();
+  });
+
+program
+  .command('service-install')
+  .description('Install persistent service for current OS')
+  .action(async () => {
+    const msg = await installService();
+    console.log(msg);
+  });
+
+program
+  .command('service-uninstall')
+  .description('Uninstall persistent service for current OS')
+  .action(async () => {
+    const msg = await uninstallService();
+    console.log(msg);
   });
 
 program

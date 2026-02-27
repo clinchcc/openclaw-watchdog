@@ -11,6 +11,8 @@
     "init": "node src/cli/index.js init",
     "check": "node src/cli/index.js check",
     "doctor": "node src/cli/index.js doctor",
+    "service:install": "node src/cli/index.js service-install",
+    "service:uninstall": "node src/cli/index.js service-uninstall",
     "lint": "echo 'add your linter here'",
     "test": "echo 'add tests here'"
   },

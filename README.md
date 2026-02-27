@@ -86,6 +86,20 @@ cd C:\path\to\openclaw-watchdog
 
 Then verify the `OpenClawWatchdog` task is enabled in Task Scheduler.
 
+## One-command service management
+
+You can also let the CLI auto-detect OS and manage persistence:
+
+```bash
+npm run service:install
+npm run service:uninstall
+```
+
+During `npm run init`, you can choose:
+- Do nothing
+- Install service
+- Uninstall service
+
 ## Cross-platform helper
 
 Run:

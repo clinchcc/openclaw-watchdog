@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import inquirer from 'inquirer';
+import { installService, uninstallService } from '../doctor/service.js';
 
 export async function runInit() {
   const answers = await inquirer.prompt([
@@ -94,13 +95,34 @@ export async function runInit() {
       name: 'WHATSAPP_WEBHOOK_TOKEN',
       message: 'WhatsApp webhook token (optional):',
       when: (a) => a.NOTIFIER === 'whatsapp'
+    },
+    {
+      type: 'list',
+      name: 'SERVICE_ACTION',
+      message: 'Persistent service action after config:',
+      choices: [
+        { name: 'Do nothing', value: 'none' },
+        { name: 'Install service', value: 'install' },
+        { name: 'Uninstall service', value: 'uninstall' }
+      ],
+      default: 'none'
     }
   ]);
 
   const envPath = path.resolve(process.cwd(), '.env');
-  const lines = Object.entries(answers).map(([k, v]) => `${k}=${String(v)}`);
+  const { SERVICE_ACTION, ...envValues } = answers;
+  const lines = Object.entries(envValues).map(([k, v]) => `${k}=${String(v)}`);
   fs.writeFileSync(envPath, lines.join('\n') + '\n', 'utf-8');
 
   console.log(`✅ Wrote ${envPath}`);
+
+  if (SERVICE_ACTION === 'install') {
+    const msg = await installService();
+    console.log(`✅ ${msg}`);
+  } else if (SERVICE_ACTION === 'uninstall') {
+    const msg = await uninstallService();
+    console.log(`✅ ${msg}`);
+  }
+
   console.log('Next: npm start');
 }
