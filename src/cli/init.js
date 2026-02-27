@@ -14,23 +14,7 @@ export async function runInit() {
       message: 'Claw name for notifications:',
       default: 'OpenClaw'
     },
-    {
-      type: 'input',
-      name: 'OPENCLAW_CONFIG_PATH',
-      message: 'OpenClaw config path (optional, leave blank for auto):',
-      default: '',
-      validate: (v) => {
-        const val = String(v || '').trim();
-        if (!val) return true;
-        if (/^npm\s+start$/i.test(val) || /^npm\s+run\s+/i.test(val)) {
-          return 'OPENCLAW_CONFIG_PATH must be a file path, not a command.';
-        }
-        if (!/openclaw\.json$/i.test(val)) {
-          return 'Please provide a path ending with openclaw.json, or leave blank for auto.';
-        }
-        return true;
-      }
-    },
+    // OPENCLAW_CONFIG_PATH not asked, defaults to auto-detect
     {
       type: 'input',
       name: 'HEALTH_URL',
@@ -55,30 +39,8 @@ export async function runInit() {
       message: 'Consecutive failures before rollback is allowed:',
       default: '5'
     },
-    {
-      type: 'confirm',
-      name: 'AUTO_RESTART',
-      message: 'Enable auto-restart?',
-      default: true
-    },
-    {
-      type: 'input',
-      name: 'RESTART_COMMAND',
-      message: 'Restart command:',
-      default: 'openclaw gateway restart'
-    },
-    {
-      type: 'confirm',
-      name: 'AUTO_ROLLBACK',
-      message: 'Enable auto-rollback?',
-      default: true
-    },
-    {
-      type: 'input',
-      name: 'ROLLBACK_COMMAND',
-      message: 'Rollback command (`internal` recommended):',
-      default: 'internal'
-    },
+    // AUTO_RESTART and RESTART_COMMAND not asked, defaults set below
+    // AUTO_ROLLBACK and ROLLBACK_COMMAND not asked, defaults set below
     {
       type: 'list',
       name: 'NOTIFIER',
@@ -132,10 +94,15 @@ export async function runInit() {
   const envPath = path.resolve(process.cwd(), '.env');
   const { SERVICE_ACTION, ...envValues } = answers;
   envValues.PROJECT_DIR = process.cwd();
-  // Set notification defaults (not asked in init, but written to .env)
+  // Set defaults (not asked in init, but written to .env)
   envValues.NOTIFY_INTERVAL_MS = envValues.NOTIFY_INTERVAL_MS || '3600000';
   envValues.QUIET_HOURS_START = envValues.QUIET_HOURS_START || '23';
   envValues.QUIET_HOURS_END = envValues.QUIET_HOURS_END || '10';
+  envValues.OPENCLAW_CONFIG_PATH = envValues.OPENCLAW_CONFIG_PATH || '';
+  envValues.AUTO_RESTART = envValues.AUTO_RESTART !== undefined ? envValues.AUTO_RESTART : 'true';
+  envValues.RESTART_COMMAND = envValues.RESTART_COMMAND || 'openclaw gateway restart';
+  envValues.AUTO_ROLLBACK = envValues.AUTO_ROLLBACK !== undefined ? envValues.AUTO_ROLLBACK : 'true';
+  envValues.ROLLBACK_COMMAND = envValues.ROLLBACK_COMMAND || 'internal';
   const lines = Object.entries(envValues).map(([k, v]) => `${k}=${String(v)}`);
   fs.writeFileSync(envPath, lines.join('\n') + '\n', 'utf-8');
 
