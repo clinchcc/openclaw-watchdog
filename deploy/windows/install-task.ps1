@@ -20,7 +20,7 @@ if (-not (Test-Path $ProjectDir)) {
 }
 
 $taskName = "OpenClawWatchdog"
-$action = New-ScheduledTaskAction -Execute $nodePath -Argument "src/cli/index.js run" -WorkingDirectory $ProjectDir
+$action = New-ScheduledTaskAction -Execute $nodePath -Argument "src/cli/index.js run" -WorkingDirectory $ProjectDir -WindowStyle Hidden
 $trigger = New-ScheduledTaskTrigger -AtLogOn
 $settings = New-ScheduledTaskSettingsSet -RestartCount 999 -RestartInterval (New-TimeSpan -Minutes 1)
 
