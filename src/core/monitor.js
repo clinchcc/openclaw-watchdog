@@ -110,9 +110,12 @@ export async function runLoop(config) {
     'watchdog started'
   );
 
-  await notify(config, `[${config.CLAW_NAME}] 🚀 Watchdog service started successfully.`).catch((e) =>
-    logger.warn({ err: e.message }, 'startup notification failed')
-  );
+  try {
+    await notify(config, `[${config.CLAW_NAME}] 🚀 Watchdog service started successfully.`);
+    logger.info({}, 'startup notification sent');
+  } catch (e) {
+    logger.warn({ err: e.message }, 'startup notification failed');
+  }
 
   const tick = async () => {
     if (inFlight) {
