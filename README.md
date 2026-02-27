@@ -49,43 +49,24 @@ Notifier-specific fields:
 
 ## Run as a persistent service
 
-Use the watchdog as a background service for production-like usage.
+You usually do **not** need manual service setup anymore.
 
-### macOS (launchd)
+### Recommended (automatic)
 
-```bash
-mkdir -p ~/Library/LaunchAgents
-cp deploy/macos/com.openclaw.watchdog.plist.example \
-  ~/Library/LaunchAgents/com.openclaw.watchdog.plist
-
-# Edit paths in the plist if your project is not in the default location
-launchctl load -w ~/Library/LaunchAgents/com.openclaw.watchdog.plist
-launchctl start com.openclaw.watchdog
-```
-
-### Linux (systemd --user)
+Use init and choose service action when prompted:
 
 ```bash
-mkdir -p ~/.config/systemd/user
-cp deploy/linux/openclaw-watchdog.service.example \
-  ~/.config/systemd/user/openclaw-watchdog.service
-
-# Edit WorkingDirectory if needed
-systemctl --user daemon-reload
-systemctl --user enable --now openclaw-watchdog
-systemctl --user status openclaw-watchdog
+npm run init
 ```
 
-### Windows (Task Scheduler)
+Or run direct commands:
 
-Run PowerShell as Administrator:
-
-```powershell
-cd C:\path\to\openclaw-watchdog
-.\deploy\windows\install-task.ps1 -ProjectDir "C:\path\to\openclaw-watchdog"
+```bash
+npm run service:install
+npm run service:uninstall
 ```
 
-Then verify the `OpenClawWatchdog` task is enabled in Task Scheduler.
+The CLI auto-detects your OS and installs/removes the correct service type.
 
 ## One-command service management
 
