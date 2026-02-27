@@ -5,7 +5,7 @@ After=network.target
 [Service]
 Type=simple
 WorkingDirectory=%h/openclaw-watchdog
-ExecStart=/usr/bin/env npm start
+ExecStart=%t/openclaw-watchdog/node_modules/.bin/node src/cli/index.js run
 Restart=always
 RestartSec=5
 Environment=NODE_ENV=production

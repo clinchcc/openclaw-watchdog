@@ -8,7 +8,7 @@
   <array>
     <string>/bin/zsh</string>
     <string>-lc</string>
-    <string>cd __PROJECT_DIR__ &amp;&amp; /usr/bin/env npm start</string>
+    <string>cd __PROJECT_DIR__ && node src/cli/index.js run</string>
   </array>
 
   <key>EnvironmentVariables</key>
