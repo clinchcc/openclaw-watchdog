@@ -70,8 +70,13 @@ export async function runOnce(config, state) {
   if (h.ok) {
     if (state.failCount > 0) {
       await notify(config, `[${config.CLAW_NAME}] 🟢 recovered (HTTP ${h.code})`);
-    } else if (config.NOTIFY_ON_HEALTHY) {
-      await notify(config, `[${config.CLAW_NAME}] ✅ healthy (HTTP ${h.code})`).catch(() => {});
+      state.lastHealthyNotify = Date.now();
+    } else if (config.NOTIFY_INTERVAL_MS > 0) {
+      const now = Date.now();
+      if (now - state.lastHealthyNotify >= config.NOTIFY_INTERVAL_MS) {
+        await notify(config, `[${config.CLAW_NAME}] ✅ healthy (HTTP ${h.code})`).catch(() => {});
+        state.lastHealthyNotify = now;
+      }
     }
     state.failCount = 0;
     logger.info({ code: h.code }, 'healthy');
@@ -100,12 +105,13 @@ export async function runOnce(config, state) {
 }
 
 export async function runLoop(config) {
-  const state = { failCount: 0 };
+  const state = { failCount: 0, lastHealthyNotify: 0 };
   let inFlight = false;
 
   logger.info(
     {
       intervalMs: config.CHECK_INTERVAL_MS,
+      notifyIntervalMs: config.NOTIFY_INTERVAL_MS,
       threshold: config.FAIL_THRESHOLD,
       rollbackThreshold: config.ROLLBACK_THRESHOLD
     },

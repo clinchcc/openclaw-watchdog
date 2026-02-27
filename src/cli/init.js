@@ -44,12 +44,6 @@ export async function runInit() {
       default: '300000'
     },
     {
-      type: 'confirm',
-      name: 'NOTIFY_ON_HEALTHY',
-      message: 'Notify on every healthy check? (may be spammy)',
-      default: false
-    },
-    {
       type: 'input',
       name: 'FAIL_THRESHOLD',
       message: 'Consecutive failures before recovery attempt:',
