@@ -21,7 +21,7 @@ export async function runInit() {
       type: 'input',
       name: 'CHECK_INTERVAL_MS',
       message: 'Check interval (ms):',
-      default: '600000'
+      default: '300000'
     },
     {
       type: 'input',
