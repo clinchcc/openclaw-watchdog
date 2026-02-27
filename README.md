@@ -46,7 +46,47 @@ Notifier-specific fields:
 - Discord: `DISCORD_WEBHOOK_URL`
 - WhatsApp webhook: `WHATSAPP_WEBHOOK_URL`, `WHATSAPP_WEBHOOK_TOKEN` (optional)
 
-## Cross-platform service setup
+## Run as a persistent service
+
+Use the watchdog as a background service for production-like usage.
+
+### macOS (launchd)
+
+```bash
+mkdir -p ~/Library/LaunchAgents
+cp deploy/macos/com.openclaw.watchdog.plist.example \
+  ~/Library/LaunchAgents/com.openclaw.watchdog.plist
+
+# Edit paths in the plist if your project is not in the default location
+launchctl load -w ~/Library/LaunchAgents/com.openclaw.watchdog.plist
+launchctl start com.openclaw.watchdog
+```
+
+### Linux (systemd --user)
+
+```bash
+mkdir -p ~/.config/systemd/user
+cp deploy/linux/openclaw-watchdog.service.example \
+  ~/.config/systemd/user/openclaw-watchdog.service
+
+# Edit WorkingDirectory if needed
+systemctl --user daemon-reload
+systemctl --user enable --now openclaw-watchdog
+systemctl --user status openclaw-watchdog
+```
+
+### Windows (Task Scheduler)
+
+Run PowerShell as Administrator:
+
+```powershell
+cd C:\path\to\openclaw-watchdog
+.\deploy\windows\install-task.ps1 -ProjectDir "C:\path\to\openclaw-watchdog"
+```
+
+Then verify the `OpenClawWatchdog` task is enabled in Task Scheduler.
+
+## Cross-platform helper
 
 Run:
 
@@ -54,11 +94,7 @@ Run:
 npm run doctor
 ```
 
-Then use templates:
-
-- macOS (launchd): `deploy/macos/com.openclaw.watchdog.plist.example`
-- Linux (systemd): `deploy/linux/openclaw-watchdog.service.example`
-- Windows (Task Scheduler): `deploy/windows/install-task.ps1`
+This prints OS-specific setup guidance and template locations.
 
 ## License
 
