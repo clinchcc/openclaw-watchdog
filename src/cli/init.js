@@ -45,24 +45,6 @@ export async function runInit() {
     },
     {
       type: 'input',
-      name: 'NOTIFY_INTERVAL_MS',
-      message: 'Healthy notification interval (ms, 0 to disable):',
-      default: '3600000'
-    },
-    {
-      type: 'input',
-      name: 'QUIET_HOURS_START',
-      message: 'Quiet hours start (hour 0-23):',
-      default: '23'
-    },
-    {
-      type: 'input',
-      name: 'QUIET_HOURS_END',
-      message: 'Quiet hours end (hour 0-23):',
-      default: '10'
-    },
-    {
-      type: 'input',
       name: 'FAIL_THRESHOLD',
       message: 'Consecutive failures before recovery attempt:',
       default: '1'
@@ -150,6 +132,10 @@ export async function runInit() {
   const envPath = path.resolve(process.cwd(), '.env');
   const { SERVICE_ACTION, ...envValues } = answers;
   envValues.PROJECT_DIR = process.cwd();
+  // Set notification defaults (not asked in init, but written to .env)
+  envValues.NOTIFY_INTERVAL_MS = envValues.NOTIFY_INTERVAL_MS || '3600000';
+  envValues.QUIET_HOURS_START = envValues.QUIET_HOURS_START || '23';
+  envValues.QUIET_HOURS_END = envValues.QUIET_HOURS_END || '10';
   const lines = Object.entries(envValues).map(([k, v]) => `${k}=${String(v)}`);
   fs.writeFileSync(envPath, lines.join('\n') + '\n', 'utf-8');
 
