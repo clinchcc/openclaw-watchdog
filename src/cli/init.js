@@ -111,6 +111,7 @@ export async function runInit() {
 
   const envPath = path.resolve(process.cwd(), '.env');
   const { SERVICE_ACTION, ...envValues } = answers;
+  envValues.PROJECT_DIR = process.cwd();
   const lines = Object.entries(envValues).map(([k, v]) => `${k}=${String(v)}`);
   fs.writeFileSync(envPath, lines.join('\n') + '\n', 'utf-8');
 

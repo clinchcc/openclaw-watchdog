@@ -29,6 +29,7 @@ npm start
 
 Generated `.env` fields:
 
+- `PROJECT_DIR` (auto-written by `init`, used by service install)
 - `OPENCLAW_CONFIG_PATH` (optional explicit path to `openclaw.json`)
 - `HEALTH_URL`
 - `CHECK_INTERVAL_MS`

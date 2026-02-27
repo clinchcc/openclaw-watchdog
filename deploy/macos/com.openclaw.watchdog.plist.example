@@ -3,15 +3,24 @@
 <plist version="1.0">
 <dict>
   <key>Label</key><string>com.openclaw.watchdog</string>
+
   <key>ProgramArguments</key>
   <array>
     <string>/bin/zsh</string>
     <string>-lc</string>
-    <string>cd $HOME/openclaw-watchdog && npm start</string>
+    <string>cd __PROJECT_DIR__ &amp;&amp; /usr/bin/env npm start</string>
   </array>
+
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key>
+    <string>__PATH__</string>
+  </dict>
+
   <key>RunAtLoad</key><true/>
   <key>KeepAlive</key><true/>
-  <key>StandardOutPath</key><string>$HOME/.openclaw-watchdog/watchdog.out.log</string>
-  <key>StandardErrorPath</key><string>$HOME/.openclaw-watchdog/watchdog.err.log</string>
+
+  <key>StandardOutPath</key><string>__STDOUT_PATH__</string>
+  <key>StandardErrorPath</key><string>__STDERR_PATH__</string>
 </dict>
 </plist>

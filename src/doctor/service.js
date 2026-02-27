@@ -4,6 +4,15 @@ import os from 'node:os';
 import { execaCommand } from 'execa';
 
 function projectDir() {
+  if (process.env.PROJECT_DIR) return process.env.PROJECT_DIR;
+
+  const envPath = path.join(process.cwd(), '.env');
+  if (fs.existsSync(envPath)) {
+    const content = fs.readFileSync(envPath, 'utf-8');
+    const m = content.match(/^PROJECT_DIR=(.*)$/m);
+    if (m && m[1].trim()) return m[1].trim();
+  }
+
   return process.cwd();
 }
 
@@ -14,9 +23,20 @@ export async function installService() {
   if (p === 'darwin') {
     const src = path.join(cwd, 'deploy/macos/com.openclaw.watchdog.plist.example');
     const dst = path.join(os.homedir(), 'Library/LaunchAgents/com.openclaw.watchdog.plist');
-    let content = fs.readFileSync(src, 'utf-8').replace('cd $HOME/openclaw-watchdog && npm start', `cd ${cwd} && npm start`);
+    const logDir = path.join(os.homedir(), '.openclaw-watchdog');
+    const stdoutPath = path.join(logDir, 'watchdog.out.log');
+    const stderrPath = path.join(logDir, 'watchdog.err.log');
+
+    let content = fs.readFileSync(src, 'utf-8');
+    content = content.replace('__PROJECT_DIR__', cwd);
+    content = content.replace('__PATH__', process.env.PATH || '/usr/bin:/bin:/usr/sbin:/sbin');
+    content = content.replace('__STDOUT_PATH__', stdoutPath);
+    content = content.replace('__STDERR_PATH__', stderrPath);
+
     fs.mkdirSync(path.dirname(dst), { recursive: true });
+    fs.mkdirSync(logDir, { recursive: true });
     fs.writeFileSync(dst, content, 'utf-8');
+
     await execaCommand(`launchctl unload ${dst}`, { shell: true }).catch(() => {});
     await execaCommand(`launchctl load -w ${dst}`, { shell: true });
     await execaCommand('launchctl start com.openclaw.watchdog', { shell: true }).catch(() => {});
