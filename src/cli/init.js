@@ -45,6 +45,24 @@ export async function runInit() {
     },
     {
       type: 'input',
+      name: 'NOTIFY_INTERVAL_MS',
+      message: 'Healthy notification interval (ms, 0 to disable):',
+      default: '3600000'
+    },
+    {
+      type: 'input',
+      name: 'QUIET_HOURS_START',
+      message: 'Quiet hours start (hour 0-23):',
+      default: '23'
+    },
+    {
+      type: 'input',
+      name: 'QUIET_HOURS_END',
+      message: 'Quiet hours end (hour 0-23):',
+      default: '10'
+    },
+    {
+      type: 'input',
       name: 'FAIL_THRESHOLD',
       message: 'Consecutive failures before recovery attempt:',
       default: '1'
