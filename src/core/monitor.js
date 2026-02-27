@@ -73,7 +73,13 @@ export async function runOnce(config, state) {
       state.lastHealthyNotify = Date.now();
     } else if (config.NOTIFY_INTERVAL_MS > 0) {
       const now = Date.now();
-      if (now - state.lastHealthyNotify >= config.NOTIFY_INTERVAL_MS) {
+      const hour = new Date().getHours();
+      const isQuietHours =
+        config.QUIET_HOURS_START > config.QUIET_HOURS_END
+          ? hour >= config.QUIET_HOURS_START || hour < config.QUIET_HOURS_END
+          : hour >= config.QUIET_HOURS_START && hour < config.QUIET_HOURS_END;
+
+      if (!isQuietHours && now - state.lastHealthyNotify >= config.NOTIFY_INTERVAL_MS) {
         await notify(config, `[${config.CLAW_NAME}] ✅ healthy (HTTP ${h.code})`).catch(() => {});
         state.lastHealthyNotify = now;
       }

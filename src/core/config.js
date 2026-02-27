@@ -4,6 +4,8 @@ import { z } from 'zod';
 const schema = z.object({
   CLAW_NAME: z.string().default('OpenClaw'),
   NOTIFY_INTERVAL_MS: z.coerce.number().int().min(0).default(3600000), // 1 hour default
+  QUIET_HOURS_START: z.coerce.number().int().min(0).max(23).default(23), // quiet hours start (hour, 0-23)
+  QUIET_HOURS_END: z.coerce.number().int().min(0).max(23).default(8),   // quiet hours end (hour, 0-23)
   PROJECT_DIR: z.string().optional(),
   OPENCLAW_CONFIG_PATH: z.string().optional(),
   HEALTH_URL: z.string().url().default('http://localhost:18789/health'),
