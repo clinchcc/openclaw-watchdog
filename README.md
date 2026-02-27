@@ -24,13 +24,6 @@ npm run init
 npm start
 ```
 
-Or directly:
-
-```bash
-npx oc-watchdog init
-npx oc-watchdog run
-```
-
 ## Config
 
 Generated `.env` fields:
@@ -38,6 +31,7 @@ Generated `.env` fields:
 - `HEALTH_URL`
 - `CHECK_INTERVAL_MS`
 - `FAIL_THRESHOLD`
+- `ROLLBACK_THRESHOLD` (only rollback after this many consecutive failures)
 - `AUTO_RESTART`
 - `RESTART_COMMAND`
 - `AUTO_ROLLBACK`

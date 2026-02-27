@@ -18,7 +18,7 @@ export async function checkHealth(config) {
   }
 }
 
-export async function recover(config) {
+export async function recover(config, failCount) {
   if (config.autoRestart) {
     logger.warn({ cmd: config.RESTART_COMMAND }, 'attempting restart');
     try {
@@ -30,8 +30,11 @@ export async function recover(config) {
     }
   }
 
-  if (config.autoRollback) {
-    logger.warn({ cmd: config.ROLLBACK_COMMAND }, 'attempting rollback');
+  if (config.autoRollback && failCount >= config.ROLLBACK_THRESHOLD) {
+    logger.warn(
+      { cmd: config.ROLLBACK_COMMAND, failCount, rollbackThreshold: config.ROLLBACK_THRESHOLD },
+      'attempting rollback'
+    );
     try {
       await runCommand(config.ROLLBACK_COMMAND);
       const afterRollback = await checkHealth(config);
@@ -62,10 +65,12 @@ export async function runOnce(config, state) {
 
   await notify(
     config,
-    `🔴 OpenClaw unhealthy (HTTP ${h.code || 'N/A'}). Trying recovery: restart -> rollback.`
+    `🔴 OpenClaw unhealthy (HTTP ${h.code || 'N/A'}). Trying recovery: restart first${
+      state.failCount >= config.ROLLBACK_THRESHOLD ? ' -> rollback' : ''
+    }.`
   );
 
-  const result = await recover(config);
+  const result = await recover(config, state.failCount);
   if (result.recovered) {
     state.failCount = 0;
     await notify(config, `🛠 Recovery succeeded via ${result.step}.`);

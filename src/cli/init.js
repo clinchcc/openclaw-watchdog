@@ -19,8 +19,14 @@ export async function runInit() {
     {
       type: 'input',
       name: 'FAIL_THRESHOLD',
-      message: 'Consecutive failures before recovery:',
+      message: 'Consecutive failures before recovery attempt:',
       default: '1'
+    },
+    {
+      type: 'input',
+      name: 'ROLLBACK_THRESHOLD',
+      message: 'Consecutive failures before rollback is allowed:',
+      default: '5'
     },
     {
       type: 'confirm',
