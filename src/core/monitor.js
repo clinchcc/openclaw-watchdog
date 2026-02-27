@@ -69,7 +69,7 @@ export async function runOnce(config, state) {
   const h = await checkHealth(config);
   if (h.ok) {
     if (state.failCount > 0) {
-      await notify(config, `🟢 OpenClaw recovered (HTTP ${h.code})`);
+      await notify(config, `[${config.CLAW_NAME}] 🟢 recovered (HTTP ${h.code})`);
     }
     state.failCount = 0;
     logger.info({ code: h.code }, 'healthy');
@@ -83,7 +83,7 @@ export async function runOnce(config, state) {
 
   await notify(
     config,
-    `🔴 OpenClaw unhealthy (HTTP ${h.code || 'N/A'}). Trying recovery: restart first${
+    `[${config.CLAW_NAME}] 🔴 unhealthy (HTTP ${h.code || 'N/A'}). Trying recovery: restart first${
       state.failCount >= config.ROLLBACK_THRESHOLD ? ' -> rollback' : ''
     }.`
   );
@@ -91,9 +91,9 @@ export async function runOnce(config, state) {
   const result = await recover(config, state.failCount);
   if (result.recovered) {
     state.failCount = 0;
-    await notify(config, `🛠 Recovery succeeded via ${result.step}.`);
+    await notify(config, `[${config.CLAW_NAME}] 🛠 recovery succeeded via ${result.step}.`);
   } else {
-    await notify(config, '❌ Recovery failed. Manual intervention required.');
+    await notify(config, `[${config.CLAW_NAME}] ❌ recovery failed. Manual intervention required.`);
   }
 }
 
@@ -110,7 +110,7 @@ export async function runLoop(config) {
     'watchdog started'
   );
 
-  await notify(config, '🚀 OpenClaw Watchdog service started successfully.').catch((e) =>
+  await notify(config, `[${config.CLAW_NAME}] 🚀 Watchdog service started successfully.`).catch((e) =>
     logger.warn({ err: e.message }, 'startup notification failed')
   );
 

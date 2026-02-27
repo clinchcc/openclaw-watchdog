@@ -2,6 +2,7 @@ import 'dotenv/config';
 import { z } from 'zod';
 
 const schema = z.object({
+  CLAW_NAME: z.string().default('OpenClaw'),
   PROJECT_DIR: z.string().optional(),
   OPENCLAW_CONFIG_PATH: z.string().optional(),
   HEALTH_URL: z.string().url().default('http://localhost:18789/health'),

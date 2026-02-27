@@ -10,6 +10,12 @@ export async function runInit() {
   const answers = await inquirer.prompt([
     {
       type: 'input',
+      name: 'CLAW_NAME',
+      message: 'Claw name for notifications:',
+      default: 'OpenClaw'
+    },
+    {
+      type: 'input',
       name: 'OPENCLAW_CONFIG_PATH',
       message: 'OpenClaw config path (optional, leave blank for auto):',
       default: '',

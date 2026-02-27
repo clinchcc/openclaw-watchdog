@@ -29,6 +29,7 @@ npm start
 
 Generated `.env` fields:
 
+- `CLAW_NAME` (display name used in notifications)
 - `PROJECT_DIR` (auto-written by `init`, used by service install)
 - `OPENCLAW_CONFIG_PATH` (optional explicit path to `openclaw.json`)
 - `HEALTH_URL`
