@@ -110,6 +110,10 @@ export async function runLoop(config) {
     'watchdog started'
   );
 
+  await notify(config, '🚀 OpenClaw Watchdog service started successfully.').catch((e) =>
+    logger.warn({ err: e.message }, 'startup notification failed')
+  );
+
   const tick = async () => {
     if (inFlight) {
       logger.warn('skip tick: previous run still in progress');
