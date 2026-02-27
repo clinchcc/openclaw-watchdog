@@ -1,0 +1,37 @@
+{
+  "name": "openclaw-watchdog",
+  "version": "0.1.0",
+  "description": "A simple, provider-agnostic watchdog for OpenClaw gateway health, auto-restart, rollback, and chat notifications.",
+  "type": "module",
+  "bin": {
+    "oc-watchdog": "src/cli/index.js"
+  },
+  "scripts": {
+    "start": "node src/cli/index.js run",
+    "init": "node src/cli/index.js init",
+    "check": "node src/cli/index.js check",
+    "lint": "echo 'add your linter here'",
+    "test": "echo 'add tests here'"
+  },
+  "keywords": [
+    "openclaw",
+    "watchdog",
+    "monitoring",
+    "telegram",
+    "discord",
+    "whatsapp"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "axios": "^1.8.4",
+    "commander": "^13.1.0",
+    "dotenv": "^16.4.7",
+    "execa": "^9.5.2",
+    "inquirer": "^12.4.2",
+    "pino": "^9.6.0",
+    "zod": "^3.24.2"
+  }
+}
