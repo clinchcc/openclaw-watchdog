@@ -7,9 +7,10 @@ It checks gateway health on an interval, attempts recovery (`restart -> rollback
 ## Features
 
 - Health check (`/health` endpoint)
-- Auto-restart command
-- Built-in cross-platform rollback command (`node src/cli/index.js rollback --auto`)
-- Optional custom rollback command override
+- Auto-restart on failure
+- Built-in rollback after consecutive restart failures (configurable threshold)
+- Configurable notification intervals (e.g., hourly healthy check-ins)
+- Quiet hours support (no notifications during sleep time)
 - Notification providers:
   - Telegram Bot API
   - Discord Webhook
@@ -34,12 +35,15 @@ Generated `.env` fields:
 - `OPENCLAW_CONFIG_PATH` (optional explicit path to `openclaw.json`)
 - `HEALTH_URL`
 - `CHECK_INTERVAL_MS`
-- `FAIL_THRESHOLD`
-- `ROLLBACK_THRESHOLD` (only rollback after this many consecutive failures)
+- `FAIL_THRESHOLD` (consecutive failures before restart)
+- `ROLLBACK_THRESHOLD` (consecutive restart failures before rollback)
 - `AUTO_RESTART`
 - `RESTART_COMMAND`
 - `AUTO_ROLLBACK`
 - `ROLLBACK_COMMAND` (`internal` by default; recommended for service mode)
+- `NOTIFY_INTERVAL_MS` (healthy notification interval, default: 3600000 = 1 hour, 0 = disabled)
+- `QUIET_HOURS_START` (hour 0-23, default: 23)
+- `QUIET_HOURS_END` (hour 0-23, default: 10)
 - `NOTIFIER` = `telegram|discord|whatsapp|none`
 
 Notifier-specific fields:
