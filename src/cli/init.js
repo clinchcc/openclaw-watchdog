@@ -1,15 +1,29 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import os from 'node:os';
 import inquirer from 'inquirer';
 import { installService, uninstallService } from '../doctor/service.js';
 
 export async function runInit() {
+  const autoConfigPath = path.join(os.homedir(), '.openclaw', 'openclaw.json');
+
   const answers = await inquirer.prompt([
     {
       type: 'input',
       name: 'OPENCLAW_CONFIG_PATH',
       message: 'OpenClaw config path (optional, leave blank for auto):',
-      default: ''
+      default: '',
+      validate: (v) => {
+        const val = String(v || '').trim();
+        if (!val) return true;
+        if (/^npm\s+start$/i.test(val) || /^npm\s+run\s+/i.test(val)) {
+          return 'OPENCLAW_CONFIG_PATH must be a file path, not a command.';
+        }
+        if (!/openclaw\.json$/i.test(val)) {
+          return 'Please provide a path ending with openclaw.json, or leave blank for auto.';
+        }
+        return true;
+      }
     },
     {
       type: 'input',
@@ -116,6 +130,9 @@ export async function runInit() {
   fs.writeFileSync(envPath, lines.join('\n') + '\n', 'utf-8');
 
   console.log(`✅ Wrote ${envPath}`);
+  if (!String(envValues.OPENCLAW_CONFIG_PATH || '').trim()) {
+    console.log(`ℹ️ OPENCLAW_CONFIG_PATH is empty, auto-detect will use: ${autoConfigPath}`);
+  }
 
   if (SERVICE_ACTION === 'install') {
     const msg = await installService();
