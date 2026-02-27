@@ -104,7 +104,13 @@ export async function runOnce(config, state) {
   const result = await recover(config, state.failCount);
   if (result.recovered) {
     state.failCount = 0;
-    await notify(config, `[${config.CLAW_NAME}] 🛠 recovery succeeded via ${result.step}.`);
+    let msg = `[${config.CLAW_NAME}] 🛠 recovery succeeded via ${result.step}.`;
+    if (result.step === 'rollback' && result.selectedBackup) {
+      msg += `\nRolled back to: ${result.selectedBackup}`;
+      msg += `\nError config backed up to: ${result.errBak}`;
+      msg += `\n\nTo investigate: compare the error file with the backup and learn what caused the issue.`;
+    }
+    await notify(config, msg);
   } else {
     await notify(config, `[${config.CLAW_NAME}] ❌ recovery failed. Manual intervention required.`);
   }
