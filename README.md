@@ -138,6 +138,11 @@ Install:
 .\deploy\windows\install-task.ps1 -ProjectDir "C:\path\to\openclaw-watchdog"
 ```
 
+Notes:
+- Installer auto-detects `node.exe` from PATH.
+- If Node.js is missing, it exits with an install hint.
+- If PowerShell runtime is unavailable, it exits with a clear error.
+
 Restart:
 
 ```powershell
