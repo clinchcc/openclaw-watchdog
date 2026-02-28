@@ -19,8 +19,9 @@ export async function checkHealth(config) {
   }
 }
 
-export async function recover(config, failCount) {
-  if (config.autoRestart) {
+export async function recover(config, failCount, options = {}) {
+  const skipRestart = options.skipRestart || false;
+  if (config.autoRestart && !skipRestart) {
     logger.warn({ cmd: config.RESTART_COMMAND }, 'attempting restart');
     try {
       await runCommand(config.RESTART_COMMAND);
@@ -98,18 +99,18 @@ export async function runOnce(config, state) {
   if (!state.restartAttempts) state.restartAttempts = 0;
   const shouldRollback = state.restartAttempts >= config.ROLLBACK_THRESHOLD;
 
-  await notify(
-    config,
-    `[${config.CLAW_NAME}] 🔴 unhealthy (HTTP ${h.code || 'N/A'}). Trying recovery: restart first${
-      shouldRollback ? ' -> rollback' : ''
-    }.`
-  );
+  if (shouldRollback) {
+    await notify(config, `[${config.CLAW_NAME}] 🔴 unhealthy. Starting rollback directly (restart failed ${state.restartAttempts} times).`);
+  } else {
+    await notify(config, `[${config.CLAW_NAME}] 🔴 unhealthy (HTTP ${h.code || 'N/A'}). Trying recovery: restart first.`);
+  }
 
-  const result = await recover(config, state.restartAttempts);
+  const result = shouldRollback
+    ? await recover(config, state.restartAttempts, { skipRestart: true })
+    : await recover(config, state.restartAttempts);
 
-  // Increment restart attempts when restart is attempted or fails
-  const didAttemptRestart = result.step?.includes('restart') || (!result.recovered && config.autoRestart);
-  if (didAttemptRestart) {
+  // Don't increment restart attempts when we skip restart and go directly to rollback
+  if (!shouldRollback && result.step?.includes('restart')) {
     state.restartAttempts += 1;
   }
   if (result.recovered) {
