@@ -132,7 +132,8 @@ export async function runOnce(config, state) {
     if (result.step?.includes('rollback')) {
       if (result.selectedBackup) msg += `\n📂 Restored from: ${result.selectedBackup}`;
       if (result.errBak) msg += `\n🗑 Broken config saved to: ${result.errBak}`;
-      msg += `\n\nTo find the cause, diff the two files:\n  diff "${result.errBak}" "${result.selectedBackup}"`;
+      msg += `\n\nTo fix: compare and use this prompt to let OpenClaw fix it:`;
+      msg += `\n\`\`\`diff\n$(diff "${result.errBak}" "${result.selectedBackup}" | head -50)\n\`\`\``;
     }
     await notify(config, msg);
   } else {
