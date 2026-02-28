@@ -29,7 +29,8 @@ const schema = z.object({
   DISCORD_WEBHOOK_URL: z.string().optional(),
 
   WHATSAPP_WEBHOOK_URL: z.string().optional(),
-  WHATSAPP_WEBHOOK_TOKEN: z.string().optional()
+  WHATSAPP_WEBHOOK_TOKEN: z.string().optional(),
+  FEISHU_WEBHOOK_URL: z.string().optional(),
 });
 
 export function loadConfig() {

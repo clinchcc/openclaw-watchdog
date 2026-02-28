@@ -45,7 +45,7 @@ export async function runInit() {
       type: 'list',
       name: 'NOTIFIER',
       message: 'Notifier provider:',
-      choices: ['telegram', 'discord', 'whatsapp', 'none'],
+      choices: ['telegram', 'discord', 'whatsapp', 'feishu', 'none'],
       default: 'telegram'
     },
     {
@@ -77,6 +77,12 @@ export async function runInit() {
       name: 'WHATSAPP_WEBHOOK_TOKEN',
       message: 'WhatsApp webhook token (optional):',
       when: (a) => a.NOTIFIER === 'whatsapp'
+    },
+    {
+      type: 'input',
+      name: 'FEISHU_WEBHOOK_URL',
+      message: 'Feishu webhook URL:',
+      when: (a) => a.NOTIFIER === 'feishu'
     },
     {
       type: 'list',

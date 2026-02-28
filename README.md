@@ -44,7 +44,7 @@ Generated `.env` fields:
 - `NOTIFY_INTERVAL_MS` (healthy notification interval, default: 3600000 = 1 hour, 0 = disabled)
 - `QUIET_HOURS_START` (hour 0-23, default: 23)
 - `QUIET_HOURS_END` (hour 0-23, default: 10)
-- `NOTIFIER` = `telegram|discord|whatsapp|none`
+- `NOTIFIER` = `telegram|discord|whatsapp|feishu|none`
 
 Notifier-specific fields:
 
