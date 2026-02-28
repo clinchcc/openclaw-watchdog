@@ -19,9 +19,13 @@ if (-not (Test-Path $ProjectDir)) {
   exit 1
 }
 
+$logDir = "$env:USERPROFILE\.openclaw-watchdog"
+if (-not (Test-Path $logDir)) { New-Item -ItemType Directory -Path $logDir -Force | Out-Null }
+$outLog = "$logDir\watchdog.out.log"
+$errLog = "$logDir\watchdog.err.log"
+
 $taskName = "OpenClawWatchdog"
-# Use powershell -WindowStyle Hidden for older PowerShell compatibility
-$action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-NoProfile -WindowStyle Hidden -Command `"cd '$ProjectDir'; & '$nodePath' src/cli/index.js run`""
+$action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-NoProfile -WindowStyle Hidden -Command `"cd '$ProjectDir'; & '$nodePath' src/cli/index.js run > '$outLog' 2> '$errLog'`""
 $trigger = New-ScheduledTaskTrigger -AtLogOn
 $settings = New-ScheduledTaskSettingsSet -RestartCount 999 -RestartInterval (New-TimeSpan -Minutes 1)
 
