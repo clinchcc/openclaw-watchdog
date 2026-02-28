@@ -57,7 +57,8 @@ export async function recover(config, failCount, options = {}) {
           healthUrl: config.HEALTH_URL,
           restartCommand: config.RESTART_COMMAND
         });
-        if (r.ok) return { recovered: true, step: 'rollback' };
+        if (r.ok) return { recovered: true, step: 'rollback', selectedBackup: r.selectedBackup, errBak: r.errBak, cfg: r.cfg };
+        return { recovered: false, step: r.step, selectedBackup: r.selectedBackup, errBak: r.errBak, cfg: r.cfg };
       } else {
         const hasConfigPathArg = /(^|\s)--config-path(\s|=)/.test(config.ROLLBACK_COMMAND);
         const rollbackCmd = `${config.ROLLBACK_COMMAND} ${
@@ -129,17 +130,18 @@ export async function runOnce(config, state) {
     state.failCount = 0;
     let msg = `[${config.CLAW_NAME}] 🛠 recovery succeeded via ${result.step}.`;
     if (result.step?.includes('rollback')) {
-      if (result.selectedBackup) {
-        msg += `\nRolled back to: ${result.selectedBackup}`;
-      }
-      if (result.errBak) {
-        msg += `\nError config backed up to: ${result.errBak}`;
-      }
-      msg += `\n\nTo investigate: compare the error file with the backup and learn what caused the issue.`;
+      if (result.selectedBackup) msg += `\n📂 Restored from: ${result.selectedBackup}`;
+      if (result.errBak) msg += `\n🗑 Broken config saved to: ${result.errBak}`;
+      msg += `\n\nTo find the cause, diff the two files:\n  diff "${result.errBak}" "${result.selectedBackup}"`;
     }
     await notify(config, msg);
   } else {
-    await notify(config, `[${config.CLAW_NAME}] ❌ recovery failed. Manual intervention required.`);
+    let msg = `[${config.CLAW_NAME}] ❌ recovery failed. Manual intervention required.`;
+    if (result.step?.includes('rollback')) {
+      if (result.selectedBackup) msg += `\n📂 Attempted backup: ${result.selectedBackup}`;
+      if (result.errBak) msg += `\n🗑 Broken config saved to: ${result.errBak}`;
+    }
+    await notify(config, msg);
   }
 
   if (config.RECOVER_COOLDOWN_MS > 0) {
