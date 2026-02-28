@@ -4,9 +4,16 @@ import { notify } from '../notifiers/index.js';
 import { logger } from '../utils/logger.js';
 import { runRollback } from './rollback.js';
 
-async function runCommand(cmd) {
-  const { stdout, stderr } = await execaCommand(cmd, { shell: true });
-  return [stdout, stderr].filter(Boolean).join('\n');
+async function runCommand(cmd, timeoutMs = 30000) {
+  try {
+    const { stdout, stderr } = await execaCommand(cmd, { shell: true, timeout: timeoutMs });
+    return [stdout, stderr].filter(Boolean).join('\n');
+  } catch (e) {
+    if (e.timedOut) {
+      throw new Error(`Command timed out after ${timeoutMs}ms: ${cmd}`);
+    }
+    throw e;
+  }
 }
 
 export async function checkHealth(config) {
