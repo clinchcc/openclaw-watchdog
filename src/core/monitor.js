@@ -107,8 +107,9 @@ export async function runOnce(config, state) {
 
   const result = await recover(config, state.restartAttempts);
 
-  // Increment restart attempts if restart was attempted
-  if (result.step?.includes('restart')) {
+  // Increment restart attempts when restart is attempted or fails
+  const didAttemptRestart = result.step?.includes('restart') || (!result.recovered && config.autoRestart);
+  if (didAttemptRestart) {
     state.restartAttempts += 1;
   }
   if (result.recovered) {
