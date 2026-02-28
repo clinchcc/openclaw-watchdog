@@ -32,7 +32,10 @@ export async function recover(config, failCount, options = {}) {
     logger.warn({ cmd: config.RESTART_COMMAND }, 'attempting restart');
     try {
       await runCommand(config.RESTART_COMMAND);
-      const afterRestart = await checkHealth(config);
+      const afterRestart = await Promise.race([
+        checkHealth(config),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('health check timeout')), 15000))
+      ]);
       if (afterRestart.ok) return { recovered: true, step: 'restart' };
     } catch (e) {
       logger.error({ err: e.message }, 'restart failed');
