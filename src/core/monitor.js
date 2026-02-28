@@ -4,6 +4,8 @@ import { notify } from '../notifiers/index.js';
 import { logger } from '../utils/logger.js';
 import { runRollback } from './rollback.js';
 
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
 async function runCommand(cmd, timeoutMs = 30000) {
   try {
     const { stdout, stderr } = await execaCommand(cmd, { shell: true, timeout: timeoutMs });
@@ -119,9 +121,9 @@ export async function runOnce(config, state) {
     ? await recover(config, state.restartAttempts, { skipRestart: true })
     : await recover(config, state.restartAttempts);
 
-  // Don't increment restart attempts when we skip restart and go directly to rollback
-  if (!shouldRollback && result.step?.includes('restart')) {
+  if (!shouldRollback) {
     state.restartAttempts += 1;
+    logger.info({ restartAttempts: state.restartAttempts, rollbackThreshold: config.ROLLBACK_THRESHOLD }, 'restart attempt counted');
   }
   if (result.recovered) {
     state.failCount = 0;
@@ -139,18 +141,24 @@ export async function runOnce(config, state) {
   } else {
     await notify(config, `[${config.CLAW_NAME}] ❌ recovery failed. Manual intervention required.`);
   }
+
+  if (config.RECOVER_COOLDOWN_MS > 0) {
+    logger.info({ cooldownMs: config.RECOVER_COOLDOWN_MS }, 'cooling down after recovery attempt');
+    await sleep(config.RECOVER_COOLDOWN_MS);
+  }
 }
 
 export async function runLoop(config) {
   const state = { failCount: 0, lastHealthyNotify: 0 };
-  let inFlight = false;
 
   logger.info(
     {
       intervalMs: config.CHECK_INTERVAL_MS,
       notifyIntervalMs: config.NOTIFY_INTERVAL_MS,
       threshold: config.FAIL_THRESHOLD,
-      rollbackThreshold: config.ROLLBACK_THRESHOLD
+      rollbackThreshold: config.ROLLBACK_THRESHOLD,
+      startupDelayMs: config.STARTUP_DELAY_MS,
+      recoverCooldownMs: config.RECOVER_COOLDOWN_MS
     },
     'watchdog started'
   );
@@ -162,30 +170,21 @@ export async function runLoop(config) {
     logger.warn({ err: e.message }, 'startup notification failed');
   }
 
-  let inFlightStart = 0;
+  if (config.STARTUP_DELAY_MS > 0) {
+    logger.info({ delayMs: config.STARTUP_DELAY_MS }, 'waiting startup grace period');
+    await sleep(config.STARTUP_DELAY_MS);
+  }
 
-  const tick = async () => {
-    if (inFlight) {
-      // Force reset if stuck for more than 2 minutes
-      if (Date.now() - inFlightStart > 120000) {
-        logger.warn('forcing reset of stuck recovery process');
-        inFlight = false;
-      } else {
-        logger.warn('skip tick: previous run still in progress');
-        return;
-      }
-    }
-    inFlight = true;
-    inFlightStart = Date.now();
+  const scheduleNext = () => setTimeout(tick, config.CHECK_INTERVAL_MS);
+
+  async function tick() {
     try {
       await runOnce(config, state);
     } catch (e) {
       logger.error({ err: e.message }, 'runOnce failed');
-    } finally {
-      inFlight = false;
     }
-  };
+    scheduleNext();
+  }
 
   await tick();
-  setInterval(tick, config.CHECK_INTERVAL_MS);
 }

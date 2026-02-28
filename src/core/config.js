@@ -12,6 +12,8 @@ const schema = z.object({
   CHECK_INTERVAL_MS: z.coerce.number().int().positive().default(300000),
   FAIL_THRESHOLD: z.coerce.number().int().positive().default(2),
   ROLLBACK_THRESHOLD: z.coerce.number().int().positive().default(1),
+  STARTUP_DELAY_MS: z.coerce.number().int().min(0).default(10000),
+  RECOVER_COOLDOWN_MS: z.coerce.number().int().min(0).default(30000),
 
   AUTO_RESTART: z.string().default('true'),
   RESTART_COMMAND: z.string().default('openclaw gateway restart'),

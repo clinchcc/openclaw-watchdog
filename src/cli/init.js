@@ -99,6 +99,8 @@ export async function runInit() {
   envValues.QUIET_HOURS_START = envValues.QUIET_HOURS_START || '23';
   envValues.QUIET_HOURS_END = envValues.QUIET_HOURS_END || '10';
   envValues.OPENCLAW_CONFIG_PATH = envValues.OPENCLAW_CONFIG_PATH || '';
+  envValues.STARTUP_DELAY_MS = envValues.STARTUP_DELAY_MS || '10000';
+  envValues.RECOVER_COOLDOWN_MS = envValues.RECOVER_COOLDOWN_MS || '30000';
   envValues.AUTO_RESTART = envValues.AUTO_RESTART !== undefined ? envValues.AUTO_RESTART : 'true';
   envValues.RESTART_COMMAND = envValues.RESTART_COMMAND || 'openclaw gateway restart';
   envValues.AUTO_ROLLBACK = envValues.AUTO_ROLLBACK !== undefined ? envValues.AUTO_ROLLBACK : 'true';
