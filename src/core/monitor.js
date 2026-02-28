@@ -116,9 +116,13 @@ export async function runOnce(config, state) {
   if (result.recovered) {
     state.failCount = 0;
     let msg = `[${config.CLAW_NAME}] 🛠 recovery succeeded via ${result.step}.`;
-    if (result.step?.startsWith('rollback') && result.selectedBackup) {
-      msg += `\nRolled back to: ${result.selectedBackup}`;
-      msg += `\nError config backed up to: ${result.errBak}`;
+    if (result.step?.includes('rollback')) {
+      if (result.selectedBackup) {
+        msg += `\nRolled back to: ${result.selectedBackup}`;
+      }
+      if (result.errBak) {
+        msg += `\nError config backed up to: ${result.errBak}`;
+      }
       msg += `\n\nTo investigate: compare the error file with the backup and learn what caused the issue.`;
     }
     await notify(config, msg);
