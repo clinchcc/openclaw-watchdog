@@ -152,12 +152,21 @@ export async function runLoop(config) {
     logger.warn({ err: e.message }, 'startup notification failed');
   }
 
+  let inFlightStart = 0;
+
   const tick = async () => {
     if (inFlight) {
-      logger.warn('skip tick: previous run still in progress');
-      return;
+      // Force reset if stuck for more than 2 minutes
+      if (Date.now() - inFlightStart > 120000) {
+        logger.warn('forcing reset of stuck recovery process');
+        inFlight = false;
+      } else {
+        logger.warn('skip tick: previous run still in progress');
+        return;
+      }
     }
     inFlight = true;
+    inFlightStart = Date.now();
     try {
       await runOnce(config, state);
     } catch (e) {
