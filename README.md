@@ -1,10 +1,10 @@
 # openclaw-watchdog
 
-**English** | [中文](#中文)
+**English** | [中文](#openclaw-watchdog-中文)
 
 ---
 
-## English
+## <a name="english"></a>English
 
 A lightweight Node.js watchdog for OpenClaw.
 
@@ -45,11 +45,9 @@ npm run service:uninstall # Remove service
 
 ---
 
-# openclaw-watchdog
+## <a name="openclaw-watchdog-中文"></a>openclaw-watchdog
 
-**英文** | 中文
-
----
+**[English](#english)** | 中文
 
 轻量级 Node.js 看门狗，专为 OpenClaw 设计。
 
