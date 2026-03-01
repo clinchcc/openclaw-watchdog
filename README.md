@@ -58,6 +58,27 @@ journalctl --user -u openclaw-watchdog -f
 Get-ScheduledTaskInfo -TaskName "OpenClawWatchdog"
 ```
 
+#### View Logs
+
+```bash
+# macOS / Linux
+tail -30 ~/.openclaw-watchdog/watchdog.out.log   # last 30 lines
+tail -f ~/.openclaw-watchdog/watchdog.out.log    # real-time
+
+# Windows
+Get-Content "$env:USERPROFILE\.openclaw-watchdog\watchdog.out.log" -Tail 30
+```
+
+#### Test Notifications
+
+```bash
+# Manual health check (triggers notification if unhealthy)
+npm run check
+
+# Or run in foreground to see all logs
+npm start
+```
+
 ---
 
 ## <a name="openclaw-watchdog-中文"></a>openclaw-watchdog
@@ -114,6 +135,27 @@ journalctl --user -u openclaw-watchdog -f
 
 # Windows
 Get-ScheduledTaskInfo -TaskName "OpenClawWatchdog"
+```
+
+#### 查看日志
+
+```bash
+# macOS / Linux
+tail -30 ~/.openclaw-watchdog/watchdog.out.log   # 最近30行
+tail -f ~/.openclaw-watchdog/watchdog.out.log    # 实时
+
+# Windows
+Get-Content "$env:USERPROFILE\.openclaw-watchdog\watchdog.out.log" -Tail 30
+```
+
+#### 测试通知
+
+```bash
+# 手动健康检查（会触发通知如果异常）
+npm run check
+
+# 前台运行查看所有日志
+npm start
 ```
 
 ---
