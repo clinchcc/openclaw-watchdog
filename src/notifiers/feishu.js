@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { logger } from '../utils/logger.js';
 
-export async function sendFeishu(config, message) {
+export async function notifyFeishu(config, message) {
   const { FEISHU_WEBHOOK_URL } = config;
 
   if (!FEISHU_WEBHOOK_URL) {
