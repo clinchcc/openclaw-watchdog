@@ -37,7 +37,7 @@ export async function runInit() {
       type: 'input',
       name: 'ROLLBACK_THRESHOLD',
       message: 'Consecutive failures before rollback is allowed:',
-      default: '5'
+      default: '1'
     },
     // AUTO_RESTART and RESTART_COMMAND not asked, defaults set below
     // AUTO_ROLLBACK and ROLLBACK_COMMAND not asked, defaults set below
