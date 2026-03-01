@@ -23,7 +23,11 @@ A watchdog that monitors your OpenClaw gateway 24/7. If it goes down, it automat
 |------|------|--------|
 | 1 | 0 min | Health check fails |
 | 2 | 5 min | Health check fails again → restart |
-| 3 | 10 min | Restart fails → rollback |
+| 3 | 10 min | Restart fails → rollback to .bak |
+| 4 | 15 min | .bak fails → try .bak.1 |
+| 5 | 20 min | .bak.1 fails → try .bak.2 |
+| ... | ... | Continue until success or all backups exhausted |
+| Final | - | If all backups fail → notify you with all tried backups |
 
 ### Install & Run
 
@@ -111,7 +115,11 @@ npm start
 |------|------|------|
 | 1 | 0 分钟 | 健康检查失败 |
 | 2 | 5 分钟 | 再次失败 → 重启 |
-| 3 | 10 分钟 | 重启失败 → 回滚 |
+| 3 | 10 分钟 | 重启失败 → 回滚到 .bak |
+| 4 | 15 分钟 | .bak 失败 → 尝试 .bak.1 |
+| 5 | 20 分钟 | .bak.1 失败 → 尝试 .bak.2 |
+| ... | ... | 继续直到成功或全部失败 |
+| 最后 | - | 所有备份都失败 → 通知你尝试过的所有备份 |
 
 ### 使用场景
 
