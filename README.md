@@ -6,6 +6,25 @@
 
 ## <a name="english"></a>English
 
+### What is it?
+
+A watchdog that monitors your OpenClaw gateway 24/7. If it goes down, it automatically recovers and notifies you.
+
+### How it works
+
+1. **Health Check** every 5 minutes (configurable)
+2. **If unhealthy 2 times** → auto-restart gateway  
+3. **If restart fails** → auto-rollback to last good config
+4. **Notify you** via Telegram/Discord/WhatsApp/Feishu at every step
+
+### Recovery Timeline (default)
+
+| Step | Time | Action |
+|------|------|--------|
+| 1 | 0 min | Health check fails |
+| 2 | 5 min | Health check fails again → restart |
+| 3 | 10 min | Restart fails → rollback |
+
 ### Install & Run
 
 ```bash
@@ -74,6 +93,32 @@ npm start
 ## <a name="openclaw-watchdog-中文"></a>openclaw-watchdog
 
 **[English](#english)** | 中文
+
+### 这是什么？
+
+一个 24 小时监控你 OpenClaw 网关的看门狗。如果网关挂了，自动恢复并通知你。
+
+### 工作原理
+
+1. **健康检查** 每 5 分钟（可配置）
+2. **连续 2 次失败** → 自动重启网关
+3. **重启失败** → 自动回滚到上一个正常配置
+4. **每一步都通知** 你（Telegram/Discord/WhatsApp/飞书）
+
+### 恢复时间线（默认）
+
+| 步骤 | 时间 | 操作 |
+|------|------|------|
+| 1 | 0 分钟 | 健康检查失败 |
+| 2 | 5 分钟 | 再次失败 → 重启 |
+| 3 | 10 分钟 | 重启失败 → 回滚 |
+
+### 使用场景
+
+- 保持 OpenClaw 24/7 运行
+- 崩溃后自动恢复
+- 出问题第一时间通知
+- 配置出错自动回滚
 
 ### 安装运行
 
