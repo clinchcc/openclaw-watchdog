@@ -1,3 +1,4 @@
+import path from 'node:path';
 import axios from 'axios';
 import { execaCommand } from 'execa';
 import { notify } from '../notifiers/index.js';
@@ -139,8 +140,11 @@ export async function runOnce(config, state) {
   } else {
     let msg = `[${config.CLAW_NAME}] ❌ recovery failed. Manual intervention required.`;
     if (result.step?.includes('rollback')) {
-      if (result.selectedBackup) msg += `\n📂 Attempted backup: ${result.selectedBackup}`;
-      if (result.errBak) msg += `\n🗑 Broken config saved to: ${result.errBak}`;
+      if (result.triedBackups?.length > 0) {
+        msg += `\n\n📋 Tried ${result.triedBackups.length} backups:`;
+        result.triedBackups.forEach((b, i) => msg += `\n${i + 1}. ${path.basename(b)}`);
+      }
+      if (result.errBak) msg += `\n🗑 Broken config saved to: ${path.basename(result.errBak)}`;
     }
     await notify(config, msg);
   }

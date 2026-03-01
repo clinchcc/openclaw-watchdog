@@ -26,7 +26,7 @@ function listBackups(cfgPath) {
     .readdirSync(dir)
     .filter((f) => f.startsWith(`${base}.`) && f.endsWith('.bak') && !f.includes('.err-'))
     .map((f) => path.join(dir, f))
-    .sort((a, b) => fs.statSync(b).mtimeMs - fs.statSync(a).mtimeMs);
+    .sort((a, b) => fs.statSync(b).mtimeMs - fs.statSync(a).mtimeMs); // newest first
 }
 
 function pickPrimaryBackup(cfgPath, backupArg) {
@@ -71,57 +71,53 @@ export async function runRollback({
     throw new Error('Non-auto rollback flow is not implemented yet. Use --auto.');
   }
 
+  // Backup the broken config
   const errBak = `${cfg}.err-${nowStamp()}.bak`;
   fs.copyFileSync(cfg, errBak);
 
-  const firstBak = pickPrimaryBackup(cfg, backup);
-  if (!firstBak || !fs.existsSync(firstBak)) {
+  // Get all available backups
+  const allBackups = listBackups(cfg);
+  if (allBackups.length === 0) {
     return {
       ok: false,
       step: 'rollback-missing-backup',
       cfg,
       errBak,
+      triedBackups: [],
       message: `No backup found. Expected at least ${cfg}.bak`
     };
   }
 
-  fs.copyFileSync(firstBak, cfg);
-  await restart(restartCommand).catch(() => {});
-  if (await checkHealth(healthUrl)) {
-    return { ok: true, step: 'rollback-primary', cfg, errBak, selectedBackup: firstBak };
-  }
-
-  const bak1 = `${cfg}.bak.1`;
-  if (fs.existsSync(bak1)) {
-    fs.copyFileSync(bak1, cfg);
+  // Try each backup in order (newest first)
+  const triedBackups = [];
+  for (const backupFile of allBackups) {
+    triedBackups.push(backupFile);
+    
+    // Restore this backup
+    fs.copyFileSync(backupFile, cfg);
+    
+    // Try restarting with this backup
     await restart(restartCommand).catch(() => {});
+    
     if (await checkHealth(healthUrl)) {
       return {
         ok: true,
-        step: 'rollback-secondary',
+        step: 'rollback-success',
         cfg,
         errBak,
-        selectedBackup: firstBak,
-        secondaryBackup: bak1
+        selectedBackup: backupFile,
+        triedBackups
       };
     }
-
-    return {
-      ok: false,
-      step: 'rollback-failed-both',
-      cfg,
-      errBak,
-      selectedBackup: firstBak,
-      secondaryBackup: bak1
-    };
   }
 
+  // All backups failed
   return {
     ok: false,
-    step: 'rollback-failed-no-bak1',
+    step: 'rollback-failed-all',
     cfg,
     errBak,
-    selectedBackup: firstBak,
-    secondaryBackup: bak1
+    triedBackups,
+    message: `All ${triedBackups.length} backups failed. Check error config: ${errBak}`
   };
 }
