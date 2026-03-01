@@ -43,12 +43,12 @@ Stop-ScheduledTask -TaskName "OpenClawWatchdog"
 Start-ScheduledTask -TaskName "OpenClawWatchdog"
 ```
 
-#### Check Service Status
+#### Check Status & Logs
 
 ```bash
 # macOS
 launchctl list | grep openclaw.watchdog
-tail -f ~/.openclaw-watchdog/watchdog.out.log
+tail -30 ~/.openclaw-watchdog/watchdog.out.log
 
 # Linux
 systemctl --user status openclaw-watchdog
@@ -56,16 +56,6 @@ journalctl --user -u openclaw-watchdog -f
 
 # Windows
 Get-ScheduledTaskInfo -TaskName "OpenClawWatchdog"
-```
-
-#### View Logs
-
-```bash
-# macOS / Linux
-tail -30 ~/.openclaw-watchdog/watchdog.out.log   # last 30 lines
-tail -f ~/.openclaw-watchdog/watchdog.out.log    # real-time
-
-# Windows
 Get-Content "$env:USERPROFILE\.openclaw-watchdog\watchdog.out.log" -Tail 30
 ```
 
@@ -122,12 +112,12 @@ Stop-ScheduledTask -TaskName "OpenClawWatchdog"
 Start-ScheduledTask -TaskName "OpenClawWatchdog"
 ```
 
-#### 查看服务状态
+#### 查看服务状态和日志
 
 ```bash
 # macOS
 launchctl list | grep openclaw.watchdog
-tail -f ~/.openclaw-watchdog/watchdog.out.log
+tail -30 ~/.openclaw-watchdog/watchdog.out.log   # 最近30行
 
 # Linux
 systemctl --user status openclaw-watchdog
@@ -135,16 +125,6 @@ journalctl --user -u openclaw-watchdog -f
 
 # Windows
 Get-ScheduledTaskInfo -TaskName "OpenClawWatchdog"
-```
-
-#### 查看日志
-
-```bash
-# macOS / Linux
-tail -30 ~/.openclaw-watchdog/watchdog.out.log   # 最近30行
-tail -f ~/.openclaw-watchdog/watchdog.out.log    # 实时
-
-# Windows
 Get-Content "$env:USERPROFILE\.openclaw-watchdog\watchdog.out.log" -Tail 30
 ```
 
