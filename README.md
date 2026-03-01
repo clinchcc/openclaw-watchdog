@@ -23,11 +23,13 @@ A watchdog that monitors your OpenClaw gateway 24/7. If it goes down, it automat
 |------|------|--------|
 | 1 | 0 min | Health check fails |
 | 2 | 5 min | Health check fails again → restart |
-| 3 | 10 min | Restart fails → rollback to .bak |
-| 4 | 15 min | .bak fails → try .bak.1 |
-| 5 | 20 min | .bak.1 fails → try .bak.2 |
-| ... | ... | Continue until success or all backups exhausted |
+| 3 | ~10 min | Restart fails → rollback to .bak (immediate restart + health check) |
+| 4 | ~10.5 min | .bak fails → try .bak.1 (immediate) |
+| 5 | ~11 min | .bak.1 fails → try .bak.2 (immediate) |
+| ... | ~30s each | Continue until success or all backups exhausted |
 | Final | - | If all backups fail → notify you with all tried backups |
+
+*Each backup retry takes ~30 seconds (restart timeout + health check)*
 
 ### Install & Run
 
@@ -115,11 +117,13 @@ npm start
 |------|------|------|
 | 1 | 0 分钟 | 健康检查失败 |
 | 2 | 5 分钟 | 再次失败 → 重启 |
-| 3 | 10 分钟 | 重启失败 → 回滚到 .bak |
-| 4 | 15 分钟 | .bak 失败 → 尝试 .bak.1 |
-| 5 | 20 分钟 | .bak.1 失败 → 尝试 .bak.2 |
-| ... | ... | 继续直到成功或全部失败 |
+| 3 | ~10 分钟 | 重启失败 → 回滚到 .bak（立即重启+检查） |
+| 4 | ~10.5 分钟 | .bak 失败 → 尝试 .bak.1（立即） |
+| 5 | ~11 分钟 | .bak.1 失败 → 尝试 .bak.2（立即） |
+| ... | ~30秒/个 | 继续直到成功或全部失败 |
 | 最后 | - | 所有备份都失败 → 通知你尝试过的所有备份 |
+
+*每次备份重试约 30 秒（重启超时 + 健康检查）*
 
 ### 使用场景
 
