@@ -6,41 +6,56 @@
 
 ## <a name="english"></a>English
 
-A lightweight Node.js watchdog for OpenClaw.
-
-It checks gateway health on an interval, attempts recovery (`restart -> rollback`), and sends notifications to Telegram / Discord / WhatsApp / Feishu webhooks.
-
-### Features
-
-- Health check (`/health` endpoint)
-- Auto-restart on failure
-- Built-in rollback after consecutive restart failures (configurable threshold)
-- Configurable notification intervals (e.g., hourly healthy check-ins)
-- Quiet hours support (no notifications during sleep time)
-- Notification providers: Telegram, Discord, WhatsApp, Feishu
-- Interactive setup: `npm run init`
-
-### Quick Start
+### Install & Run
 
 ```bash
 npm install
-npm run init
-npm start
+npm run init   # Configure (notifications, intervals, etc)
+npm start      # Run in foreground (for testing)
 ```
 
-### Config
+### Service Management (All Platforms)
 
-- `CLAW_NAME` - display name in notifications
-- `NOTIFIER` = `telegram|discord|whatsapp|feishu|none`
-- `NOTIFY_INTERVAL_MS` - healthy notification interval (default: 3600000 = 1 hour)
-- `QUIET_HOURS_START/END` - quiet hours (default: 23-10)
-- And more...
-
-### Service Commands
+#### Install Service (Auto)
 
 ```bash
-npm run service:install   # Install as system service
-npm run service:uninstall # Remove service
+npm run service:install
+```
+
+#### Uninstall Service
+
+```bash
+npm run service:uninstall
+```
+
+#### Restart Service
+
+```bash
+# macOS
+launchctl stop com.openclaw.watchdog
+launchctl start com.openclaw.watchdog
+
+# Linux
+systemctl --user restart openclaw-watchdog
+
+# Windows
+Stop-ScheduledTask -TaskName "OpenClawWatchdog"
+Start-ScheduledTask -TaskName "OpenClawWatchdog"
+```
+
+#### Check Service Status
+
+```bash
+# macOS
+launchctl list | grep openclaw.watchdog
+tail -f ~/.openclaw-watchdog/watchdog.out.log
+
+# Linux
+systemctl --user status openclaw-watchdog
+journalctl --user -u openclaw-watchdog -f
+
+# Windows
+Get-ScheduledTaskInfo -TaskName "OpenClawWatchdog"
 ```
 
 ---
@@ -49,39 +64,65 @@ npm run service:uninstall # Remove service
 
 **[English](#english)** | 中文
 
-轻量级 Node.js 看门狗，专为 OpenClaw 设计。
-
-定时检查网关健康状态，尝试恢复（重启 → 回滚），并通过 Telegram / Discord / WhatsApp / 飞书发送通知。
-
-### 功能特点
-
-- 健康检查 (`/health` 端点)
-- 失败后自动重启
-- 连续重启失败后自动回滚（阈值可配置）
-- 可配置通知间隔（如每小时健康签到）
-- 静音时段支持（睡眠时间不打扰）
-- 通知渠道：Telegram、Discord、WhatsApp、飞书
-- 交互式配置：`npm run init`
-
-### 快速开始
+### 安装运行
 
 ```bash
 npm install
-npm run init
-npm start
+npm run init   # 配置（通知、间隔等）
+npm start      # 前台运行（测试用）
 ```
+
+### 服务管理（全部平台）
+
+#### 安装服务（自动）
+
+```bash
+npm run service:install
+```
+
+#### 卸载服务
+
+```bash
+npm run service:uninstall
+```
+
+#### 重启服务
+
+```bash
+# macOS
+launchctl stop com.openclaw.watchdog
+launchctl start com.openclaw.watchdog
+
+# Linux
+systemctl --user restart openclaw-watchdog
+
+# Windows
+Stop-ScheduledTask -TaskName "OpenClawWatchdog"
+Start-ScheduledTask -TaskName "OpenClawWatchdog"
+```
+
+#### 查看服务状态
+
+```bash
+# macOS
+launchctl list | grep openclaw.watchdog
+tail -f ~/.openclaw-watchdog/watchdog.out.log
+
+# Linux
+systemctl --user status openclaw-watchdog
+journalctl --user -u openclaw-watchdog -f
+
+# Windows
+Get-ScheduledTaskInfo -TaskName "OpenClawWatchdog"
+```
+
+---
 
 ### 配置项
 
 - `CLAW_NAME` - 通知显示名称
 - `NOTIFIER` = `telegram|discord|whatsapp|feishu|none`
-- `NOTIFY_INTERVAL_MS` - 健康通知间隔（默认 3600000 = 1 小时）
+- `NOTIFY_INTERVAL_MS` - 健康通知间隔（默认 1 小时）
 - `QUIET_HOURS_START/END` - 静音时段（默认 23-10）
-- 更多...
-
-### 服务命令
-
-```bash
-npm run service:install   # 安装为系统服务
-npm run service:uninstall # 卸载服务
-```
+- `FAIL_THRESHOLD` - 失败次数触发重启（默认 2）
+- `ROLLBACK_THRESHOLD` - 重启失败次数触发回滚（默认 1）
