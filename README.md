@@ -15,7 +15,7 @@ A watchdog that monitors your OpenClaw gateway 24/7. If it goes down, it automat
 1. **Health Check** every 5 minutes (configurable)
 2. **If unhealthy 2 times** → auto-restart gateway  
 3. **If restart fails** → auto-rollback to last good config
-4. **Notify you** via Telegram/Discord/WhatsApp/Feishu at every step
+4. **Notify you** via Telegram/Discord/WhatsApp/Feishu at every step (includes backup file paths for debugging)
 
 ### Recovery Timeline (default)
 
@@ -103,7 +103,7 @@ npm start
 1. **健康检查** 每 5 分钟（可配置）
 2. **连续 2 次失败** → 自动重启网关
 3. **重启失败** → 自动回滚到上一个正常配置
-4. **每一步都通知** 你（Telegram/Discord/WhatsApp/飞书）
+4. **每一步都通知** 你（包含备份文件路径，帮你定位问题）
 
 ### 恢复时间线（默认）
 
